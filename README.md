@@ -2,6 +2,8 @@
 
 MK-RacingCars3D é um protótipo de jogo de corrida 3D desenvolvido em Unity, inspirado em simuladores de gestão de equipes de corrida. O jogo já possui mecânicas de corrida, estratégia de pit stops e controle de pilotos, mesmo estando em fase de desenvolvimento.
 
+O jogo foi desenvolvido na Unity (C#) e é parte do meu portfólio como desenvolvedor.
+
 ---
 
 ## 🎮 Gameplay
