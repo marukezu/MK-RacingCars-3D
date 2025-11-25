@@ -61,3 +61,8 @@ O jogo foi desenvolvido na Unity (C#) e é parte do meu portfólio como desenvol
 **Maurício Makimori** – Desenvolvedor independente  
 - GitHub: [marukezu](https://github.com/marukezu)  
 - Instagram: [@marukesu92](https://www.instagram.com/marukesu92/)
+
+- ## 📜 Licença
+
+Todos os direitos reservados.
+O código e os assets podem ser analisados e estudados, mas não podem ser usados, modificados, redistribuídos ou comercializados sem autorização.
