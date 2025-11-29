@@ -89,8 +89,10 @@ public class PilotoController_Corrida : MonoBehaviour
         float velocidadeCarro = controller.carro.carroceria.velocidadeKMAtual;
         float velocidadeWaypoint = 0f;
 
-        // Se o carro a frente estiver próximo ganha 5% de bonus de velocidade no waypoint. (Facilitar Ultrapassagens)
-        if (controller.carroFrente != controller.carro && controller.distanciaCarroFrente < 25f)
+        // Se o carro a frente, na mesma faixa, estiver próximo ganha 5% de bonus de velocidade no waypoint. (Facilitar Ultrapassagens)
+        if (controller.carroFrente != controller.carro &&
+            controller.RetornaDistanciaCarroFrente() < 7.5f &&
+            controller.carroFrente.pilotoController.faixaAtual == controller.faixaAtual)
         {
             velocidadeWaypoint = controller.waypointAtual.GetWaypointSpeed(controller) + 5f;
         }
@@ -113,7 +115,10 @@ public class PilotoController_Corrida : MonoBehaviour
             float fatorGiroVolante = Mathf.Abs(controller.potenciaGiroDirecao);
 
             // Adiciona a potencia dependendo do esterco do volante.
-            novapotenciaAceleracao = Mathf.Clamp01((Mathf.Clamp(1f - ((fatorGiroVolante * 0.5f)), 0.7f, 1f)));
+            if (!controller.trocandoFaixa)
+            {
+                novapotenciaAceleracao = Mathf.Clamp01((Mathf.Clamp(1f - ((fatorGiroVolante * 0.5f)), 0.7f, 1f)));
+            }
 
             // Fator de inclinação - subida ou descida.
             float inclinacao = controller.carro.carroceria.carRigidBody.transform.eulerAngles.x;
@@ -264,7 +269,7 @@ public class PilotoController_Corrida : MonoBehaviour
         // Antes de trocar, verifica segurança (sua função atual)
         if (controller.VerificarSePodeTrocarFaixa(faixaEscolhida))
         {
-            controller.AlternarFaixa(faixaEscolhida, 2.5f);
+            controller.AlternarFaixa(faixaEscolhida, 0.5f);
             controller.AvancarProximoWaypoint(controller.waypointAtual.ID + 1);
         }
     }
