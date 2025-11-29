@@ -103,14 +103,14 @@ public class Campeonato
         else if (torneio == Torneio.Copper_CUP)
         {
             // Inicializa os pilotos.
-            piloto3 = new Piloto(3, "Victor Thunderbolt", 79, 96, 92, 94, Carro.Modelo.Lanzia, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
-            piloto4 = new Piloto(4, "Amanda Blaze", 74, 96, 92, 94, Carro.Modelo.Lanzia, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto3 = new Piloto(3, "Victor Thunderbolt", 79, 96, 92, 94, Carro.Modelo.MiniCupa_GREEN, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto4 = new Piloto(4, "Amanda Blaze", 74, 96, 92, 94, Carro.Modelo.MiniCupa_GREEN, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
 
-            piloto5 = new Piloto(5, "Leonardo Apex", 78, 96, 92, 94, Carro.Modelo.LanziaStradale, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
-            piloto6 = new Piloto(6, "Camila Drift", 73, 96, 92, 94, Carro.Modelo.LanziaStradale, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto5 = new Piloto(5, "Leonardo Apex", 78, 96, 92, 94, Carro.Modelo.MiniCupa_YELLOW, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto6 = new Piloto(6, "Camila Drift", 73, 96, 92, 94, Carro.Modelo.MiniCupa_YELLOW, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
 
-            piloto7 = new Piloto(7, "Enzo Speedster", 77, 96, 92, 94, Carro.Modelo.RinaultAlpine, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
-            piloto8 = new Piloto(8, "Diego Rocket", 73, 96, 92, 94, Carro.Modelo.RinaultAlpine, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto7 = new Piloto(7, "Enzo Speedster", 77, 96, 92, 94, Carro.Modelo.MiniCupa_BLUE, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto8 = new Piloto(8, "Diego Rocket", 73, 96, 92, 94, Carro.Modelo.MiniCupa_BLUE, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
 
             // Adiciona as pistas.
             Pista pista1 = new Pista("Pista de Terra", "Race02-Pista-Circuito-Deserto");
@@ -133,14 +133,14 @@ public class Campeonato
         else if (torneio == Torneio.Silver_CUP)
         {
             // Inicializa os pilotos.
-            piloto3 = new Piloto(3, "Felipe Ignition", 88, 96, 92, 94, Carro.Modelo.Lanzia, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
-            piloto4 = new Piloto(4, "Pedro Throttle", 83, 96, 92, 94, Carro.Modelo.Lanzia, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto3 = new Piloto(3, "Felipe Ignition", 88, 96, 92, 94, Carro.Modelo.MiniCupa_GREEN, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto4 = new Piloto(4, "Pedro Throttle", 83, 96, 92, 94, Carro.Modelo.MiniCupa_GREEN, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
 
-            piloto5 = new Piloto(5, "Gustavo Circuit", 88, 96, 92, 94, Carro.Modelo.LanziaStradale, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
-            piloto6 = new Piloto(6, "Isabella Sprint", 82, 96, 92, 94, Carro.Modelo.LanziaStradale, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto5 = new Piloto(5, "Gustavo Circuit", 88, 96, 92, 94, Carro.Modelo.MiniCupa_YELLOW, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto6 = new Piloto(6, "Isabella Sprint", 82, 96, 92, 94, Carro.Modelo.MiniCupa_YELLOW, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
 
-            piloto7 = new Piloto(7, "Bianca Flame", 86, 96, 92, 94, Carro.Modelo.RinaultAlpine, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
-            piloto8 = new Piloto(8, "Bruno Overdrive", 81, 96, 92, 94, Carro.Modelo.RinaultAlpine, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto7 = new Piloto(7, "Bianca Flame", 86, 96, 92, 94, Carro.Modelo.MiniCupa_BLUE, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto8 = new Piloto(8, "Bruno Overdrive", 81, 96, 92, 94, Carro.Modelo.MiniCupa_BLUE, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
 
             // Adiciona as pistas.
             Pista pista1 = new Pista("Pista de Terra", "Race01-Pista-Terra");
@@ -167,14 +167,14 @@ public class Campeonato
         else if (torneio == Torneio.Golden_CUP)
         {
             // Inicializa os pilotos.
-            piloto3 = new Piloto(3, "L.Hamilton", 98, 96, 92, 94, Carro.Modelo.Lanzia, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
-            piloto4 = new Piloto(4, "G.Russell", 94, 96, 92, 94, Carro.Modelo.Lanzia, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto3 = new Piloto(3, "L.Hamilton", 98, 96, 92, 94, Carro.Modelo.MiniCupa_GREEN, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto4 = new Piloto(4, "G.Russell", 94, 96, 92, 94, Carro.Modelo.MiniCupa_GREEN, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
 
-            piloto5 = new Piloto(5, "M.Verstappen", 98, 96, 92, 94, Carro.Modelo.LanziaStradale, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
-            piloto6 = new Piloto(6, "S.Pérez", 93, 96, 92, 94, Carro.Modelo.LanziaStradale, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto5 = new Piloto(5, "M.Verstappen", 98, 96, 92, 94, Carro.Modelo.MiniCupa_YELLOW, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto6 = new Piloto(6, "S.Pérez", 93, 96, 92, 94, Carro.Modelo.MiniCupa_YELLOW, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
 
-            piloto7 = new Piloto(7, "F.Alonso", 96, 96, 92, 94, Carro.Modelo.RinaultAlpine, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
-            piloto8 = new Piloto(8, "Lance Stroll", 92, 96, 92, 94, Carro.Modelo.RinaultAlpine, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto7 = new Piloto(7, "F.Alonso", 96, 96, 92, 94, Carro.Modelo.MiniCupa_BLUE, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Um, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
+            piloto8 = new Piloto(8, "Lance Stroll", 92, 96, 92, 94, Carro.Modelo.MiniCupa_BLUE, new Carro_Upgrades(), Piloto.NumeroDoPiloto.Dois, pneusDuros, pneusMedios, pneusMacios, pneusMolhado, pneusChuva);
 
             // Adiciona as pistas.
             Pista pista1 = new Pista("Pista de Terra", "Race01-Pista-Terra");

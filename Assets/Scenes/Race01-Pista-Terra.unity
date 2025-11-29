@@ -76988,7 +76988,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   corridaEmAndamento: 0
   corridaFinalizada: 0
-  voltasTotais: 10
+  voltasTotais: 35
   tempoTotalClassificacao: 5
   classificacaoEmAndamento: 0
   classificacaoFinalizada: 0
@@ -77876,6 +77876,11 @@ MonoBehaviour:
   waypoint_Terra_PaiCentro: {fileID: 526986207}
   waypoint_Terra_PaiPitStop: {fileID: 33011319}
   waypointsTotal: 0
+  waypointsEsq: []
+  waypointsDir: []
+  waypointsCentro: []
+  waypoints_PitStop: []
+  TotalTamanhoPista: 0
 --- !u!4 &1807799047
 Transform:
   m_ObjectHideFlags: 0
