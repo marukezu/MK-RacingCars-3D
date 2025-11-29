@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 9a2aba94ae3231a46b5eee0e490f7039
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - carro_Lanzia: {fileID: 4389576292803895287, guid: 4b0a07e6651108d4a825ea0a1380eb8f, type: 3}
+  - carro_LanziaStradale: {fileID: 4108942091228219092, guid: 2a15661a0041e444f8657f90ecec1a2d, type: 3}
+  - carro_RinaultAlpine: {fileID: 6292357137090500383, guid: 80245767249f6e94895655d21573178c, type: 3}
+  - carro_MiniCupa: {fileID: 1863923444749142204, guid: c79c6c5855b0b1c46a0fd66e4894f82b, type: 3}
+  - carro_Concessionaria_Lanzia: {fileID: 5029938163581490152, guid: 67d6ee42a55dedc48b460d474facb28d, type: 3}
+  - carro_Concessionaria_LanziaStradale: {fileID: 7017705903358585362, guid: ce64531e883f0414986d93c45044c48d, type: 3}
+  - carro_Concessionaria_RinaultAlpine: {fileID: 3784087677487629359, guid: 82ec3de665f7f6b4092ab51c55776d15, type: 3}
+  - carro_Concessionaria_MiniCupa: {fileID: 4135619687817387230, guid: db029e7b9ac50f64c901f49a4bbd4123, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
