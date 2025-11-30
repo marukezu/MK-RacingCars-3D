@@ -41,10 +41,7 @@ public class PilotoController_Corrida : MonoBehaviour
         AcelerarFrear();
 
         // Responsável pela inteligência ao virar o volante.
-        VirarVeiculo();
-        
-        // Responsável por manter o carro na faixa do centro.
-        ManterNoCentro();
+        VirarVeiculo();       
 
         // Responsável pela inteligência para ultrapassar o carro a frente.
         Ultrapassar();
@@ -87,18 +84,16 @@ public class PilotoController_Corrida : MonoBehaviour
     private void AcelerarFrear()
     {
         float velocidadeCarro = controller.carro.carroceria.velocidadeKMAtual;
-        float velocidadeWaypoint = 0f;
+        float velocidadeWaypoint = controller.waypointAtual.GetWaypointSpeed(controller);
 
         // Se o carro a frente, na mesma faixa, estiver próximo ganha 5% de bonus de velocidade no waypoint. (Facilitar Ultrapassagens)
-        if (controller.carroFrente != controller.carro &&
-            controller.RetornaDistanciaCarroFrente() < 7.5f &&
-            controller.carroFrente.pilotoController.faixaAtual == controller.faixaAtual)
+        Piloto pilotoFrente = controller.RetornaPilotoMaisProximo_FRENTE_MesmaFaixa();
+        if (pilotoFrente != null && pilotoFrente.Carro != null)
         {
-            velocidadeWaypoint = controller.waypointAtual.GetWaypointSpeed(controller) + 5f;
-        }
-        else
-        {
-            velocidadeWaypoint = controller.waypointAtual.GetWaypointSpeed(controller);
+            if (controller.RetornaDistanciaCarro_FRENTE_MesmaFaixa() < 7.5f)
+            {
+                velocidadeWaypoint = controller.waypointAtual.GetWaypointSpeed(controller) + 5f;
+            }
         }
 
         float novapotenciaAceleracao = 0f;
@@ -174,20 +169,20 @@ public class PilotoController_Corrida : MonoBehaviour
         }
 
         // Se o carro a frente já existir e estiver na mesma faixa que eu
-        if (controller.carroFrente != null && controller.carroFrente.pilotoController.faixaAtual == controller.faixaAtual)
+        if (pilotoFrente != null && pilotoFrente.Carro != null)
         {
             // Checa se tem carro a frente próximo.
-            if (controller.distanciaCarroFrente <= 1.5f)
+            if (controller.RetornaDistanciaCarro_FRENTE_MesmaFaixa() <= 1.5f)
             {
                 // Reduzir a aceleração com base na distância.
                 novapotenciaAceleracao *= 0.9f;
             }
-            else if (controller.distanciaCarroFrente <= 4f)
+            else if (controller.RetornaDistanciaCarro_FRENTE_MesmaFaixa() <= 4f)
             {
                 // Reduzir a aceleração com base na distância.
                 novapotenciaAceleracao *= 0.95f;
             }
-            else if (controller.distanciaCarroFrente <= 8f)
+            else if (controller.RetornaDistanciaCarro_FRENTE_MesmaFaixa() <= 8f)
             {
                 // Reduzir a aceleração com base na distância.
                 novapotenciaAceleracao *= 0.975f;
@@ -239,24 +234,24 @@ public class PilotoController_Corrida : MonoBehaviour
 
     private void Ultrapassar()
     {
+        Piloto pilotoFrente = controller.RetornaPilotoMaisProximo_FRENTE_MesmaFaixa();
+        if (pilotoFrente == null)
+            return;
+        
         // Verifica condições básicas
-        if (controller.carroFrente == null || !controller.foiDadoLargada || controller.trocandoFaixa)
+        if (!controller.foiDadoLargada || controller.trocandoFaixa)
             return;
 
-        // Se o veiculo estiver entre o primeiro e o terceiro Waypoint e estiver na PRIMEIRA volta (Largada)
+        // Não troca se estiver na largada
         if (controller.waypointIndex <= 2 && controller.voltaAtual <= 1)
             return;
 
         // Se o carro a frente está muito longe (é ignorado)
-        if (controller.RetornaDistanciaCarroFrente() > 3.5f)
-            return;
-        
-        // Se eu não estiver mais rápido que ele (não devo trocar de faixa)
-        if ((controller.carro.carroceria.velocidadeKMAtual - controller.carroFrente.carroceria.velocidadeKMAtual) < 0.5f)
+        if (controller.RetornaDistanciaCarro_FRENTE_MesmaFaixa() > 3f)
             return;
 
-        // Se ele não estiver na mesma faixa que eu (não há necessidade em alterar faixa)
-        if (controller.carroFrente.pilotoController.faixaAtual != controller.faixaAtual)
+        // Se estiver mais lento que o carro da frente (não faz sentido trocar de faixa, já que estamos pegando vacuo)
+        if (controller.carro.carroceria.velocidadeKMAtual - pilotoFrente.Carro.carroceria.velocidadeKMAtual < 0.5f)
             return;
 
         // Verificar qual faixa é a melhor opção
@@ -269,17 +264,11 @@ public class PilotoController_Corrida : MonoBehaviour
         // Antes de trocar, verifica segurança (sua função atual)
         if (controller.VerificarSePodeTrocarFaixa(faixaEscolhida))
         {
-            controller.AlternarFaixa(faixaEscolhida, 0.5f);
-            controller.AvancarProximoWaypoint(controller.waypointAtual.ID + 1);
+            controller.AlternarFaixa(faixaEscolhida, 1f);
+
+            if (!controller.waypointAtual.curva)
+                controller.AvancarProximoWaypoint(controller.waypointAtual.ID + 1);
         }
-    }
-
-    private void ManterNoCentro()
-    {
-        // Se o veiculo estiver entre o primeiro e o terceiro Waypoint e estiver na PRIMEIRA volta (Largada)
-        if (controller.waypointIndex <= 2 && controller.voltaAtual <= 1)
-            return;
-
     }
 
     // =============================================================================================================
@@ -289,92 +278,100 @@ public class PilotoController_Corrida : MonoBehaviour
     {
         if (!controller.piloto.AutoMode) return;
 
-        // Modo de direção PADRAO.
-        controller.carro.comandos.SetModoDirecao(Carro.TipoDeConducao.Equilibrado);
-
-        // SE ESTA NO PITSTOP.
+        // 1. PITSTOP — sempre economia
         if (controller.faixaAtual == Faixas.PitStop)
         {
             controller.carro.comandos.SetModoDirecao(Carro.TipoDeConducao.Economia);
             return;
         }
 
-        // Por volta.
+        // 2. LARGADA — agressivo
         if (controller.voltaAtual <= 1)
         {
             controller.carro.comandos.SetModoDirecao(Carro.TipoDeConducao.Agressivo);
             return;
         }
 
-        // Pelo desgasto dos pneus.
-        if (controller.carro.carroceria.GetCondicaoMediaPneus() <= 20)
-        {
-            controller.carro.comandos.SetModoDirecao(Carro.TipoDeConducao.Economia);
-            return;
-        }
-        else if (controller.carro.carroceria.GetCondicaoMediaPneus() <= 35)
-        {
-            controller.carro.comandos.SetModoDirecao(Carro.TipoDeConducao.Equilibrado);
-            return;
-        }
-
-        // Se o carro atrás está colando.
-        if (controller.distanciaCarroAtras <= 7)
+        // 3. DEFESA — carro atrás muito perto
+        if (controller.RetornaDistanciaCarro_ATRAS_MesmaFaixa() <= 7)
         {
             controller.carro.comandos.SetModoDirecao(Carro.TipoDeConducao.Agressivo);
             return;
         }
 
-        // Se o carro a frente está a x metros, próximo.
-        if (controller.distanciaCarroFrente <= 15)
+        // 4. ATAQUE — carro à frente relativamente perto
+        if (controller.RetornaDistanciaCarro_FRENTE_MesmaFaixa() <= 15)
         {
             controller.carro.comandos.SetModoDirecao(Carro.TipoDeConducao.Forte);
             return;
         }
+
+        // 5. ESTRATÉGIA DE PNEUS
+        float condPneus = controller.carro.carroceria.GetCondicaoMediaPneus();
+
+        if (condPneus <= 20)
+        {
+            controller.carro.comandos.SetModoDirecao(Carro.TipoDeConducao.Economia);
+            return;
+        }
+        else if (condPneus <= 35)
+        {
+            controller.carro.comandos.SetModoDirecao(Carro.TipoDeConducao.Equilibrado);
+            return;
+        }
+
+        // 6. MODO PADRÃO
+        controller.carro.comandos.SetModoDirecao(Carro.TipoDeConducao.Equilibrado);
     }
 
     private void EscolherFatorMotor()
     {
         if (!controller.piloto.AutoMode) return;
 
-        // Modo padrão.
-        controller.carro.comandos.SetModoMotor(Carro.TipoDeMotor.Equilibrado);
+        float combustivel = controller.carro.carroceria.combustivelAtual;
+        float distAtras = controller.RetornaDistanciaCarro_ATRAS_MesmaFaixa();
+        float distFrente = controller.RetornaDistanciaCarro_FRENTE_MesmaFaixa();
 
-        // SE ESTA NO PITSTOP.
+        // Default agressivo, pois o jogo foi pensado assim.
+        var modo = Carro.TipoDeMotor.Agressivo;
+
+        // 1. PITSTOP
         if (controller.faixaAtual == Faixas.PitStop)
         {
-            controller.carro.comandos.SetModoMotor(Carro.TipoDeMotor.Economia);
+            modo = Carro.TipoDeMotor.Economia;
+            controller.carro.comandos.SetModoMotor(modo);
             return;
         }
 
-        // Por volta.
+        // 2. Primeira volta: atacar no início da corrida
         if (controller.voltaAtual <= 1)
         {
-            controller.carro.comandos.SetModoMotor(Carro.TipoDeMotor.Agressivo);
+            modo = Carro.TipoDeMotor.Agressivo;
+            controller.carro.comandos.SetModoMotor(modo);
             return;
         }
 
-        // Pela falta de combustivel.
-        if (controller.carro.carroceria.combustivelAtual <= 25)
-        {
-            controller.carro.comandos.SetModoMotor(Carro.TipoDeMotor.Equilibrado);
-            return;
-        }
+        // 3. Combustível baixo (ajuste fino)
+        // Aqui você pode modular isso pela pista depois.
+        if (combustivel <= 20)
+            modo = Carro.TipoDeMotor.Forte;     // apenas reduz um pouco
 
-        // Se o carro de trás está a x metros, próximo.
-        if (controller.distanciaCarroAtras <= 3)
-        {
-            controller.carro.comandos.SetModoMotor(Carro.TipoDeMotor.Agressivo);
-            return;
-        }
+        if (combustivel <= 10)
+            modo = Carro.TipoDeMotor.Equilibrado;  // economia média
 
-        // Se o carro a frente está a x metros, próximo.
-        if (controller.distanciaCarroFrente <= 7)
-        {
-            controller.carro.comandos.SetModoMotor(Carro.TipoDeMotor.Forte);
-            return;
-        }
+        if (combustivel <= 5)
+            modo = Carro.TipoDeMotor.Economia;  // agora sim, economia real
+
+        // 4. Combate: defesa ou ataque
+        if (distAtras <= 4 && combustivel > 10)
+            modo = Carro.TipoDeMotor.Agressivo;
+
+        if (distFrente <= 7 && combustivel > 10)
+            modo = Carro.TipoDeMotor.Agressivo;
+
+        controller.carro.comandos.SetModoMotor(modo);
     }
+
 
     // =============================================================================================================
     // ==================================== Estratégia de PitStop do Piloto ========================================
@@ -397,6 +394,7 @@ public class PilotoController_Corrida : MonoBehaviour
             {
                 controller.piloto.EquipePitStop.PitStopNestaVolta = true;
                 controller.piloto.EquipePitStop.VaiTrocarPneu = true;
+                controller.piloto.EquipePitStop.VaiReabastecer = true;
                 controller.piloto.EquipePitStop.Reparar = true;
             }
         }
@@ -409,6 +407,7 @@ public class PilotoController_Corrida : MonoBehaviour
             {
                 controller.piloto.EquipePitStop.PitStopNestaVolta = true;
                 controller.piloto.EquipePitStop.VaiTrocarPneu = true;
+                controller.piloto.EquipePitStop.VaiReabastecer = true;
                 controller.piloto.EquipePitStop.Reparar = true;
             }
         }
@@ -419,12 +418,12 @@ public class PilotoController_Corrida : MonoBehaviour
         // Se o jogador for mais forte que eu.
         if (PlayerSettings.pilotoJogador.HabilidadeAceleracao >= controller.piloto.HabilidadeAceleracao)
         {
-            // Se ainda tiver pneus macios.
+            // Se ainda tiver pneus macios no estoque.
             if (controller.piloto.PneuMacioQuantidade > 0)
             {
                 controller.piloto.EquipePitStop.TipoPneu = Pneu.TipoPneu.Macio;
             }
-            // Se ainda tiver pneus medios.
+            // Se ainda tiver pneus medios no estoque.
             else if (controller.piloto.PneuMedioQuantidade > 0)
             {
                 controller.piloto.EquipePitStop.TipoPneu = Pneu.TipoPneu.Medio;

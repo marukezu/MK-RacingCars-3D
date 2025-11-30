@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static PilotoController;
 
 // ==============================================================================
 // == CLASSE RESPONSÁVEL POR GERIR WAYPOINTS E DADOS DA CORRIDA SOBRE O PILOTO ==
@@ -28,19 +29,13 @@ public class PilotoController : MonoBehaviour
     public bool estaNaPista;
     public int posicaoAtual; // Posição na corrida, 1°, 2°, 3°, etc...
     public int voltaAtual;
-    public string NomePilotoFrente;
-    public Carro carroFrente;
-    public string NomePilotoAtras;
-    public Carro carroAtras;
-    public float distanciaCarroFrente;
-    public float distanciaCarroAtras;
 
     [Header("============== Tempos - Checkpoints ==============")]
     public float tempoVoltaAtual;
     public float tempoUltimaVolta;
     public float tempoTotalVoltas;
     public float tempoVoltaMaisRapida;
-    public float tempoDiferencaCarroFrente;
+    public float tempoDiferencaCarroFrente = 0;
     public int checkpointsPassados;
 
     [Header("============== Temporizadores ==============")]
@@ -90,22 +85,9 @@ public class PilotoController : MonoBehaviour
                 // Contador do tempo da volta atual.
                 tempoVoltaAtual += Time.deltaTime;
 
-                // Atualiza pilotos a frente e atrás e tempos de diferença.
-                (carroFrente, carroAtras) = RetornaCarroFrenteAtras();
-
-                if (carroFrente == null)
-                    carroFrente = carro;
-
-                if (carroAtras == null)
-                    carroAtras = carro;
-
-                // Calcula a distancia do carro a frente e atras.
-                distanciaCarroFrente = RetornaDistanciaCarroFrente();
-                distanciaCarroAtras = RetornaDistanciaCarroAtras();
-
                 // Calcula o tempo diferença do carro a frente.
                 float tempoDiferencaInstantanea = CalculaTempoDeDiferenca();
-                tempoDiferencaCarroFrente = Mathf.Lerp(tempoDiferencaCarroFrente, tempoDiferencaInstantanea, 0.5f * Time.deltaTime);
+                tempoDiferencaCarroFrente = Mathf.Max(Mathf.Lerp(tempoDiferencaCarroFrente, tempoDiferencaInstantanea, 1f * Time.deltaTime), 0);
             }
 
             // Contador para o piloto ir classificar.
@@ -122,7 +104,7 @@ public class PilotoController : MonoBehaviour
         float velocidadeEmMetrosPorSegundo = velocidadeEmKmPorHora * 1000f / 3600f;
 
         // Calculando o tempo de diferença entre os carros
-        float tempoDiferenca = distanciaCarroFrente / velocidadeEmMetrosPorSegundo;
+        float tempoDiferenca = RetornaDistanciaCarroFrenteWAYPOINTS() / velocidadeEmMetrosPorSegundo;
 
         if (posicaoAtual == 1)
             return 0;
@@ -133,103 +115,121 @@ public class PilotoController : MonoBehaviour
     // =============================================================================================================
     // ============================= Calculo Distância dos carros A Frente e Atrás =================================
     // =============================================================================================================
-    private (Carro, Carro) RetornaCarroFrenteAtras()
+    public float RetornaDistanciaCarroFrenteWAYPOINTS()
     {
-        Carro carroFrente = null;
-        Carro carroAtras = null;
+        // Pega o piloto mais próximo à frente (qualquer faixa)
+        Piloto pilotoFrente = null;
 
         foreach (Piloto outro in PlayerSettings.campeonato.pilotosParticipantes)
         {
             if (outro == piloto) continue;
+            if (outro.Carro == null) continue;
 
-            // posição local do outro carro
-            Vector3 outroLocal = transform.InverseTransformPoint(outro.Carro.transform.position);
+            // Se for o carro da minha frente, popula.
+            if (outro.Carro.pilotoController.posicaoAtual == posicaoAtual - 1)
+                pilotoFrente = outro;
+        }
 
-            bool outroNaFrente = outroLocal.z > 0f;
-            bool outroAtras = outroLocal.z < 0f;
+        if (pilotoFrente == null)
+            return 0f; // Se não houver carro à frente, retorna 0
 
-            // ------------------------------
-            //     CARRO À FRENTE
-            // ------------------------------
-            if (outroNaFrente)
+        // Pega os waypoints que meu carro está seguindo (faixa atual)
+        List<Waypoint> wps = PistaManager.Instance.waypointsCentro;
+        if (wps == null || wps.Count == 0)
+            return 0f;
+
+        Vector3 minhaPos = carro.transform.position;
+        Vector3 posOutro = pilotoFrente.Carro.transform.position;
+
+        // Encontrar waypoint mais próximo do meu carro e do carro à frente
+        int indexInicio = 0;
+        int indexFim = 0;
+        float menorDistInicio = float.MaxValue;
+        float menorDistFim = float.MaxValue;
+
+        for (int i = 0; i < wps.Count; i++)
+        {
+            float distInicio = Vector3.Distance(minhaPos, wps[i].transform.position);
+            if (distInicio < menorDistInicio)
             {
-                if (carroFrente == null)
-                {
-                    carroFrente = outro.Carro;
-                }
-                else
-                {
-                    Vector3 frenteLocal = transform.InverseTransformPoint(carroFrente.transform.position);
-
-                    // menor z positivo = mais perto na frente
-                    if (outroLocal.z < frenteLocal.z)
-                        carroFrente = outro.Carro;
-                }
+                menorDistInicio = distInicio;
+                indexInicio = i;
             }
 
-            // ------------------------------
-            //     CARRO ATRÁS
-            // ------------------------------
-            if (outroAtras)
+            float distFim = Vector3.Distance(posOutro, wps[i].transform.position);
+            if (distFim < menorDistFim)
             {
-                if (carroAtras == null)
-                {
-                    carroAtras = outro.Carro;
-                }
-                else
-                {
-                    Vector3 atrasLocal = transform.InverseTransformPoint(carroAtras.transform.position);
-
-                    // maior z negativo = mais perto atrás
-                    if (outroLocal.z > atrasLocal.z)
-                        carroAtras = outro.Carro;
-                }
+                menorDistFim = distFim;
+                indexFim = i;
             }
         }
 
-        return (carroFrente, carroAtras);
+        // Ajusta caso o índice do carro à frente seja "menor" (loop da pista)
+        if (indexFim < indexInicio)
+            indexFim += wps.Count;
+
+        // Soma distância do meu carro até o primeiro waypoint
+        float distanciaTotal = Vector3.Distance(minhaPos, wps[indexInicio % wps.Count].transform.position);
+
+        // Soma distâncias entre waypoints
+        for (int i = indexInicio; i < indexFim; i++)
+        {
+            Waypoint atual = wps[i % wps.Count];
+            Waypoint proximo = wps[(i + 1) % wps.Count];
+            distanciaTotal += Vector3.Distance(atual.transform.position, proximo.transform.position);
+        }
+
+        // Soma distância do último waypoint até o carro à frente
+        distanciaTotal += Vector3.Distance(wps[indexFim % wps.Count].transform.position, posOutro);
+
+        return distanciaTotal;
     }
 
-    public float RetornaDistanciaCarroFrente()
+    public float RetornaDistanciaCarro_FRENTE_MesmaFaixa()
     {
-        if (carroFrente == null) return 999f;
+        // Pega o piloto mais próximo à frente na mesma faixa
+        Piloto pilotoFrente = RetornaPilotoMaisProximo_FRENTE_MesmaFaixa();
+        if (pilotoFrente == null)
+            return 999f;
 
-        // Pontos reais no mundo
+        // Pontos do carro
         Vector3 minhaFrente = carro.carroceria.pontoBicoCarro.position;
-        Vector3 traseiraOutro = carroFrente.carroceria.pontoTraseiroCarro.position;
+        Vector3 traseiraOutro = pilotoFrente.Carro.carroceria.pontoTraseiroCarro.position;
 
-        // Converte a traseira do outro carro para meu espaço local
+        // Converte para meu espaço local
         Vector3 outroLocal = transform.InverseTransformPoint(traseiraOutro);
-
-        // Converte a minha frente também para meu espaço local
         Vector3 minhaFrenteLocal = transform.InverseTransformPoint(minhaFrente);
 
-        // Distância ao longo do eixo Z (minha frente até traseira dele)
+        // Distância ao longo do eixo Z
         float distanciaZ = outroLocal.z - minhaFrenteLocal.z;
 
         return Mathf.Max(distanciaZ, 0f);
     }
 
-    public float RetornaDistanciaCarroAtras()
+    public float RetornaDistanciaCarro_ATRAS_MesmaFaixa()
     {
-        if (carroAtras == null) return 999f;
+        // Pega o piloto mais próximo à frente na mesma faixa
+        Piloto pilotoAtras = RetornaPilotoMaisProximo_ATRAS_MesmaFaixa();
+        if (pilotoAtras == null || pilotoAtras.Carro == null)
+            return 999f;
 
         Vector3 minhaTraseira = carro.carroceria.pontoTraseiroCarro.position;
-        Vector3 frenteOutro = carroAtras.carroceria.pontoBicoCarro.position;
+        Vector3 frenteOutro = pilotoAtras.Carro.carroceria.pontoBicoCarro.position;
 
-        Vector3 outroLocal = transform.InverseTransformPoint(frenteOutro);
+        Vector3 frenteOutroLocal = transform.InverseTransformPoint(frenteOutro);
         Vector3 minhaTraseiraLocal = transform.InverseTransformPoint(minhaTraseira);
 
-        // para carro atrás, a distância correta é:
-        float distanciaZ = minhaTraseiraLocal.z - outroLocal.z;
+        float distanciaZ = minhaTraseiraLocal.z - frenteOutroLocal.z;
 
         return Mathf.Max(distanciaZ, 0f);
     }
 
-    private float DistanciaCarrosMesmaFaixa(Faixas faixa)
+    public Piloto RetornaPilotoMaisProximo_FRENTE_MesmaFaixa() // Esse método ele retorna o piloto mais próximo e que está na frente, da faixa que vem por parâmetro.
     {
         float melhorDistancia = 9999f;
+        Piloto pilotoProximo = null;
 
+        // Pega a frente do meu carro
         Vector3 minhaFrenteWorld = carro.carroceria.pontoBicoCarro.position;
         Vector3 minhaFrenteLocal = transform.InverseTransformPoint(minhaFrenteWorld);
 
@@ -238,8 +238,12 @@ public class PilotoController : MonoBehaviour
             if (outro == piloto) continue;
             if (outro.Carro == null) continue;
 
-            // Apenas carros na faixa que queremos avaliar
-            if (outro.Carro.pilotoController.faixaAtual != faixa)
+            // Se o piloto estiver atrás de mim, ignora.
+            if (outro.Carro.pilotoController.posicaoAtual > posicaoAtual)
+                continue;
+
+            // Se o piloto estiver em faixa diferente da minha, ignora.
+            if (outro.Carro.pilotoController.faixaAtual != faixaAtual)
                 continue;
 
             // Pegar a traseira do outro carro
@@ -248,9 +252,82 @@ public class PilotoController : MonoBehaviour
 
             float distanciaZ = traseiraOutroLocal.z - minhaFrenteLocal.z;
 
-            // Carro atrás ou muito perto: ignora
-            if (distanciaZ <= 0)
+            // Procurar o carro mais próximo
+            if (distanciaZ < melhorDistancia)
+            {
+                melhorDistancia = distanciaZ;
+                pilotoProximo = outro;
+            }
+        }
+
+        return pilotoProximo;
+    }
+
+    public Piloto RetornaPilotoMaisProximo_ATRAS_MesmaFaixa() // Esse método ele retorna o piloto mais próximo e que está atrás, da faixa que vem por parâmetro.
+    {
+        float melhorDistancia = 9999f;
+        Piloto pilotoProximo = null;
+
+        // Pega a frente do meu carro
+        Vector3 minhaTraseiraWorld = carro.carroceria.pontoTraseiroCarro.position;
+        Vector3 minhaTraseiraLocal = transform.InverseTransformPoint(minhaTraseiraWorld);
+
+        foreach (Piloto outro in PlayerSettings.campeonato.pilotosParticipantes)
+        {
+            if (outro == piloto) continue;
+            if (outro.Carro == null) continue;
+
+            // Se o piloto estiver na frente de mim, ignora.
+            if (outro.Carro.pilotoController.posicaoAtual < posicaoAtual)
                 continue;
+
+            // Se o piloto estiver em faixa diferente da minha, ignora.
+            if (outro.Carro.pilotoController.faixaAtual != faixaAtual)
+                continue;
+
+            // Pegar a traseira do outro carro
+            Vector3 frenteOutroWorld = outro.Carro.carroceria.pontoBicoCarro.position;
+            Vector3 frenteOutroLocal = transform.InverseTransformPoint(frenteOutroWorld);
+
+            float distanciaZ = frenteOutroLocal.z - minhaTraseiraLocal.z;
+
+            // Procurar o carro mais próximo
+            if (distanciaZ < melhorDistancia)
+            {
+                melhorDistancia = distanciaZ;
+                pilotoProximo = outro;
+            }
+        }
+
+        return pilotoProximo;
+    }
+
+    private float RetornaDistanciaMaisProximaCarro_FaixaSelecionavel(Faixas faixa) // Esse método ele retorna a distância do carro mais próximo da faixa que vem por parâmetro.
+    {
+        float melhorDistancia = 9999f;
+
+        // Pega a frente do meu carro
+        Vector3 minhaFrenteWorld = carro.carroceria.pontoBicoCarro.position;
+        Vector3 minhaFrenteLocal = transform.InverseTransformPoint(minhaFrenteWorld);
+
+        foreach (Piloto outro in PlayerSettings.campeonato.pilotosParticipantes)
+        {
+            if (outro == piloto) continue;
+            if (outro.Carro == null) continue;
+
+            // Se o carro estiver atrás de mim, ignora.
+            if (outro.Carro.pilotoController.posicaoAtual > posicaoAtual)
+                continue;
+
+            // Se outro estiver em faixa diferente da minha, ignora.
+            if (outro.Carro.pilotoController.faixaAtual != faixa)
+                continue;
+
+            // Pegar a traseira do outro carro
+            Vector3 traseiraOutroWorld = outro.Carro.carroceria.pontoTraseiroCarro.position;
+            Vector3 traseiraOutroLocal = transform.InverseTransformPoint(traseiraOutroWorld);
+
+            float distanciaZ = traseiraOutroLocal.z - minhaFrenteLocal.z;
 
             // Procurar o carro mais próximo
             if (distanciaZ < melhorDistancia)
@@ -264,8 +341,9 @@ public class PilotoController : MonoBehaviour
     {
         // Parâmetros ajustáveis
         float maxCheckDistance = 7f;   // raio inicial pra filtrar
-        float frenteThreshold = 4f;    // distância perigosa à frente (minha frente <-> traseira do outro)
-        float trasThreshold = 6f;      // distância perigosa atrás (minha traseira <-> frente do outro)
+        float frenteThreshold = 5f;    // distância perigosa à frente (minha frente <-> traseira do outro)
+        float trasThreshold = 5f;      // distância perigosa atrás (minha traseira <-> frente do outro)
+        float lateralThreshold = 2.5f; // distancia perigosa lateral
         float frontBackTolerance = 0f; // margem para considerar "na frente" ou "atrás"
 
         // Posição do meu carro (world points das referências do carro)
@@ -348,7 +426,6 @@ public class PilotoController : MonoBehaviour
             else
             {
                 // lateral: considerar uma distância curta para bloquear a troca (evitar colisões ao cortar)
-                float lateralThreshold = 2.5f;
                 if (distanciaEntrePontos <= lateralThreshold)
                 {
                     if (outro.Carro.pilotoController.faixaAtual == faixaDestino)
@@ -361,7 +438,7 @@ public class PilotoController : MonoBehaviour
         return true;
     }
 
-    public Faixas EscolherMelhorFaixa()
+    public Faixas EscolherMelhorFaixa() // Escolhe a melhor faixa para trocar, baseando-se no método "RetornaDistanciaMaisProximaCarroMesmaFaixa"
     {
         // Se estou na esquerda → única opção possível é voltar ao centro
         if (faixaAtual == Faixas.Esquerda)
@@ -376,8 +453,8 @@ public class PilotoController : MonoBehaviour
         }
 
         // Se estou no centro → avaliar esquerda e direita
-        float dEsquerda = DistanciaCarrosMesmaFaixa(Faixas.Esquerda);
-        float dDireita = DistanciaCarrosMesmaFaixa(Faixas.Direita);
+        float dEsquerda = RetornaDistanciaMaisProximaCarro_FaixaSelecionavel(Faixas.Esquerda);
+        float dDireita = RetornaDistanciaMaisProximaCarro_FaixaSelecionavel(Faixas.Direita);
 
         // Escolhe a faixa com maior espaço livre
         if (dEsquerda > dDireita)

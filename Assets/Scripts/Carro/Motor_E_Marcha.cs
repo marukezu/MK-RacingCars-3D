@@ -74,11 +74,11 @@ public class Motor_E_Marcha : MonoBehaviour
         }
 
         // Vácuo carro a frente.
-        Carro carroFrente = carro.pilotoController.carroFrente;
+        Piloto pilotoFrente = carro.pilotoController.RetornaPilotoMaisProximo_FRENTE_MesmaFaixa();
         float fatorVacuo = 0f;
-        if (carroFrente != null)
+        if (pilotoFrente != null)
         {
-            if (carro.pilotoController.distanciaCarroFrente <= 25f && carroFrente.pilotoController.faixaAtual == carro.pilotoController.faixaAtual)
+            if (carro.pilotoController.RetornaDistanciaCarro_FRENTE_MesmaFaixa() <= 25f)
             {
                 fatorVacuo = torqueInjetado * 0.05f;
             }

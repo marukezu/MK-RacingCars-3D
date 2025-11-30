@@ -20,9 +20,6 @@ public class PistaManager : MonoBehaviour
     public int waypointIndexPiloto7;
     public int waypointIndexPiloto8;
 
-    [Header("=========== CONFIGURAÇÃO DA PISTA ============")]
-    [Tooltip("Duração do dia em segundos")] public int duracaoDoDia;
-
     [Header("=========== LOCAL INICIAL DOS CARROS - CORRIDA ============")]
     public Transform posicao_Grid_1;
     public Transform posicao_Grid_2;

@@ -5,4 +5,9 @@ public class Painel_RACE_ControlarPiloto_PitStopStatus : MonoBehaviour
 {
     public Text Txt_PitStopStatus;
     public Slider Slider_PitStopProgress;
+
+    private void Update()
+    {
+        
+    }
 }

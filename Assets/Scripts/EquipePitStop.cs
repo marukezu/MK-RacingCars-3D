@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using static Pneu;
 
 public class EquipePitStop
 {
@@ -32,7 +31,7 @@ public class EquipePitStop
     public float TempoTotalPit { get; private set; }
 
     // Tipo de pneu que será instalado.
-    public Pneu.TipoPneu TipoPneu { get; set; } = Pneu.TipoPneu.Medio;
+    public Pneu.TipoPneu TipoPneu { get; set; } = Pneu.TipoPneu.Macio;
 
     // Status atual do pitstop.
     public PitStopStatus StatusPitStop { get; set; } = PitStopStatus.Parado;

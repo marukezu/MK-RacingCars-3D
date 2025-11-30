@@ -10,7 +10,7 @@ public class TimeAndDate_Manager : MonoBehaviour
     public static TimeAndDate_Manager Instance;
 
     [SerializeField] private Transform luzDirecional;
-    [SerializeField] private TextMeshProUGUI horarioText;
+    [SerializeField] private int duracaoDiaEmSegundos;
 
     private int duracaoDoDia;
     private float segundos;
@@ -26,7 +26,7 @@ public class TimeAndDate_Manager : MonoBehaviour
     {
         segundos = 86400 / 2.3f; // para iniciar o jogo 10 da manha.
 
-        SetDuracaoDia(PistaManager.Instance.duracaoDoDia);
+        SetDuracaoDia(duracaoDiaEmSegundos);
     }
 
     // Update is called once per frame

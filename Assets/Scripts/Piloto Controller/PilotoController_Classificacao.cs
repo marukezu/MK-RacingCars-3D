@@ -134,35 +134,35 @@ public class PilotoController_Classificacao : MonoBehaviour
         // Checa se tem carro a frente pr�ximo.
         if (controller.voltaAtual == 2) // Se estiver na volta rápida.
         {
-            if (controller.distanciaCarroFrente <= 2f)
+            if (controller.RetornaDistanciaCarro_FRENTE_MesmaFaixa() <= 2f)
             {
                 // Reduzir a acelera��o com base na dist�ncia.
-                novapotenciaAceleracao *= 0.85f;
+                novapotenciaAceleracao *= 0.925f;
             }
-            else if (controller.distanciaCarroFrente <= 6f)
-            {
-                // Reduzir a acelera��o com base na dist�ncia.
-                novapotenciaAceleracao *= 0.9f;
-            }
-            else if (controller.distanciaCarroFrente <= 10f)
+            else if (controller.RetornaDistanciaCarro_FRENTE_MesmaFaixa() <= 6f)
             {
                 // Reduzir a acelera��o com base na dist�ncia.
                 novapotenciaAceleracao *= 0.95f;
             }
+            else if (controller.RetornaDistanciaCarro_FRENTE_MesmaFaixa() <= 10f)
+            {
+                // Reduzir a acelera��o com base na dist�ncia.
+                novapotenciaAceleracao *= 0.975f;
+            }
         }
         else // Voltas de saida e entrada.
         {
-            if (controller.distanciaCarroFrente <= 2f) 
+            if (controller.RetornaDistanciaCarro_FRENTE_MesmaFaixa() <= 2f) 
             {
                 // Reduzir a acelera��o com base na dist�ncia.
                 novapotenciaAceleracao *= 0.5f;
             }
-            else if (controller.distanciaCarroFrente <= 6f)
+            else if (controller.RetornaDistanciaCarro_FRENTE_MesmaFaixa() <= 6f)
             {
                 // Reduzir a acelera��o com base na dist�ncia.
                 novapotenciaAceleracao *= 0.55f;
             }
-            else if (controller.distanciaCarroFrente <= 10f)
+            else if (controller.RetornaDistanciaCarro_FRENTE_MesmaFaixa() <= 10f)
             {
                 // Reduzir a acelera��o com base na dist�ncia.
                 novapotenciaAceleracao *= 0.7f;
