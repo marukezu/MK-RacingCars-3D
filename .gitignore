@@ -1,14 +1,17 @@
 ########################################
-# Unity Generated
+# Unity Generated Folders
 ########################################
 
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
+obj/
 [Bb]uild/
 [Bb]uilds/
 [Ll]ogs/
+Logs/
 [Uu]ser[Ss]ettings/
+UserSettings/
 [Mm]emoryCaptures/
 [Rr]ecordings/
 
@@ -31,6 +34,7 @@
 *.unityproj
 *.sln
 *.suo
+*.tmp
 *.user
 *.userprefs
 *.pidb
@@ -48,6 +52,7 @@
 
 .DS_Store
 Thumbs.db
+desktop.ini
 
 ########################################
 # Build Outputs
@@ -70,8 +75,13 @@ mono_crash.*
 crashlytics-build.properties
 
 ########################################
-# Optional - Ignore Asset Store Tools
+# Asset Store / Addons (CUSTOM)
 ########################################
 
-/Assets/AssetStoreTools*
 Assets/##Addons/
+
+########################################
+# Optional - Rider auto-generated Unity folder
+########################################
+
+Assets/Plugins/Editor/JetBrains*
