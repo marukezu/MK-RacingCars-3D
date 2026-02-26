@@ -7,7 +7,7 @@ O projeto explora a interseção entre simulação técnica e estratégia de equ
 
 ---
 
-🎯 ### Objetivo do Projeto
+### 🎯 Objetivo do Projeto
 
 Este projeto não foi criado apenas como um jogo jogável, mas como um estudo prático de:
 
