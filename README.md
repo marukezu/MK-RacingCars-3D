@@ -1,68 +1,121 @@
-# MK-RacingCars3D a MotorSport Manager Prototype
+MK-RacingCars3D
+A Motorsport Strategy & Simulation Prototype
 
-MK-RacingCars3D é um protótipo de jogo de corrida 3D desenvolvido em Unity, inspirado em simuladores de gestão de equipes de corrida. O jogo já possui mecânicas de corrida, estratégia de pit stops e controle de pilotos, mesmo estando em fase de desenvolvimento.
+MK-RacingCars3D é um protótipo de simulação estratégica de corrida desenvolvido em Unity (C#), com foco em arquitetura modular, tomada de decisão em tempo real e gerenciamento dinâmico de recursos durante corridas.
 
-O jogo foi desenvolvido na Unity (C#) e é parte do meu portfólio como desenvolvedor.
-
----
-
-## 🎮 Gameplay
-
-- Corridas 3D iniciam automaticamente após a contagem regressiva (3, 2, 1).  
-- Cada equipe possui 2 pilotos controlados pela IA.  
-- O jogador pode dar ordens estratégicas aos pilotos da sua equipe.  
-- Mecânicas implementadas:  
-  - Consumo de combustível  
-  - Desgaste e condição dos pneus  
-  - Paradas no pit para troca de pneus e abastecimento  
+O projeto explora a interseção entre simulação técnica e estratégia de equipe, inspirado em jogos de gestão de motorsport, porém com ênfase na modelagem de sistemas e lógica de corrida.
 
 ---
 
-## 🚀 Features implementadas
+🎯 Objetivo do Projeto
 
-- Sistema de corrida em tempo real  
-- Estratégia de pit stops  
-- Ordens dinâmicas para pilotos  
-- Sistema básico de gestão de pneus e combustível  
-- Contagem regressiva inicial
+Este projeto não foi criado apenas como um jogo jogável, mas como um estudo prático de:
 
----
+Arquitetura de sistemas em Unity
 
-## 🛠 Tecnologias utilizadas
+Simulação de corrida desacoplada da camada visual
 
-- Unity 2023.x (versão utilizada)  
-- C# para lógica de gameplay e sistemas  
-- Prefabs e assets 3D (parte desenvolvida pelo autor, parte de Asset Store)  
+Tomada de decisão estratégica baseada em variáveis de estado
 
----
+Gerenciamento dinâmico de recursos (combustível, pneus, estratégia)
 
-## ⚡ Como jogar
+Estruturação modular de managers e painéis de UI
 
-1. Abra o projeto na Unity Hub (versão recomendada: 2023.x)  
-2. Abra a cena principal: `MainScene.unity`  
-3. Clique em **Play** para iniciar a corrida  
-
-> Obs.: Este é um protótipo, não contém menus completos ou sistema de progresso ainda.
+Ele faz parte do meu portfólio como desenvolvedor independente.
 
 ---
 
-## 📌 Roadmap / Próximos passos
+🧠 Sistemas Implementados
+🏁 Simulação de Corrida
 
-- Adicionar mais equipes e pilotos jogáveis  
-- Implementar interface de gestão de equipe  
-- Melhorar IA dos pilotos e estratégias  
-- Sistema de campeonato completo  
-- Polir gráficos e efeitos visuais  
+Corrida em tempo real com múltiplos pilotos controlados por IA
+
+Sistema de contagem regressiva automática
+
+Controle de ritmo e velocidade estratégica
+
+🛞 Gestão de Recursos
+
+Consumo progressivo de combustível
+
+Desgaste e degradação de pneus
+
+Estratégia de pit stop com troca de pneus e abastecimento
+
+🎮 Controle Estratégico
+
+Ordens dinâmicas para pilotos
+
+Ajuste de comportamento durante a corrida
+
+Influência direta do jogador na tomada de decisão da equipe
 
 ---
 
-## 👨‍💻 Autor
+🏗 Arquitetura
 
-**Maurício Makimori** – Desenvolvedor independente  
-- GitHub: [marukezu](https://github.com/marukezu)  
-- Instagram: [@marukesu92](https://www.instagram.com/marukesu92/)
+O projeto foi estruturado com foco em organização e separação de responsabilidades:
 
-- ## 📜 Licença
+Managers dedicados (RaceManager, GameManager, TimeManager, etc.)
+
+Separação entre lógica de simulação e representação visual
+
+Sistema modular de SimulationEngine / painéis / HUD
+
+Prefabs organizados por responsabilidade
+
+Estrutura preparada para expansão futura (campeonato, múltiplas equipes, progressão)
+
+---
+
+🛠 Tecnologias Utilizadas
+
+Unity 2022.x
+
+C#
+
+Estrutura baseada em Prefabs e Managers desacoplados
+
+Assets 3D próprios e complementos da Asset Store
+
+▶ Como Executar
+
+Abra o projeto no Unity Hub (versão 2023.x recomendada)
+
+Carregue a cena principal
+
+Execute a cena para iniciar a simulação
+
+Observação: este é um protótipo focado em sistemas e arquitetura. Não possui menus completos ou progressão finalizada.
+
+---
+
+📌 Roadmap
+
+Sistema completo de campeonato
+
+Expansão de equipes e pilotos
+
+Interface avançada de gestão
+
+IA estratégica mais sofisticada
+
+Polimento visual e otimização
+
+---
+
+👨‍💻 Autor
+
+Maurício Makimori
+Desenvolvedor independente focado em simulação, arquitetura de sistemas e prototipagem avançada.
+
+GitHub: https://github.com/marukezu
+
+Instagram: https://www.instagram.com/marukesu92/
+
+---
+
+📜 Licença
 
 Todos os direitos reservados.
-O código e os assets podem ser analisados e estudados, mas não podem ser usados, modificados, redistribuídos ou comercializados sem autorização.
+O código pode ser analisado para fins de estudo, mas não pode ser utilizado, modificado ou redistribuído sem autorização.
