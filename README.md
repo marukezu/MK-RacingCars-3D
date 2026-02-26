@@ -80,7 +80,7 @@ Assets 3D próprios e complementos da Asset Store
 
 ---
 
-▶ ### Como Executar
+### ▶ Como Executar
 
 Abra o projeto no Unity Hub (versão 2022.x recomendada)
 
