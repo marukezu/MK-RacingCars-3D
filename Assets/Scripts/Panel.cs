@@ -1,64 +1,130 @@
 using UnityEngine;
 
-public class Panel : MonoBehaviour
+/// <summary>
+/// Classe que armazena Dados para serem passados por parâmetro a um painel
+/// </summary>
+public class PanelParams
 {
+    // Dados Avulsos
+    public string stringParam;
+    public int intParam;
+
+    // Cars
+    public CarSimVisual carSim1;
+    public CarSimVisual carSim2;
+
+    // Pilotos
+    public PilotoSim pilotoSim1;
+    public PilotoSim pilotoSim2;
+}
+
+/// <summary>
+/// Classe base para todos os painéis do jogo.
+/// </summary>
+public abstract class Panel : MonoBehaviour
+{
+    // Tipos de painéis
     public enum PanelType
     {
         // GamePlay - Race
-        RACE_JOGO, // Painel base, onde será instanciado os demais paineis
+        RACE_JOGO,
         RACE_PLACAR,
         RACE_CARINFO,
         RACE_PILOTOCONTROLLER,
-        RACE_PITSTOP_MANAGER, // Painel de PitStop, onde se planeja a próxima parada
-        RACE_RADIO, // Painel onde são instanciados as mensagens de rádio
-        RACE_GAMESPEED, // Painel que controla a velocidade do jogo
-        RACE_SESSAOCLASSIFICACAO, // Painel de informação da sessão de classificação.
+        RACE_PITSTOP_MANAGER,
+        RACE_RADIO,
+        RACE_GAMESPEED,
+        RACE_SESSAOCLASSIFICACAO,
         RACE_DATAHORA,
-
-        //
         RACE_INFO_SESSAOCLASSIFICACAO,
         RACE_INFO_SESSAOCORRIDA,
+
+        // Paineis Flutuantes
+        FLOATING_CARINFO,
+        FLOATING_DUELINFO,
     }
 
-    public virtual PanelType Type { get; set; }
+    public abstract PanelType Type { get; }
+
     protected bool Initialized = false;
 
-    protected virtual void OnDestroy()
+    // Dados para painel flutuante
+    protected bool flutuante = false;
+    protected Transform flutuanteTarget;
+    protected Vector3 flutuanteOffset = Vector3.up * 2f;
+
+    #region Unity Callbacks
+    protected virtual void OnEnable()
     {
-        PanelManager.Instance.UnregisterPanel(this);
+        
     }
 
-    private void Update()
+    protected virtual void OnDisable()
     {
-        // Inicializa uma vez o painel.
-        if (!Initialized)
-        {
-            Initialize();
-            Initialized = true;
-        }
+        SubscribeEvents(false);
+    }
 
-        // Atualiza sempre que o painel estiver ativo.
+    protected virtual void Update()
+    {
         if (gameObject.activeSelf)
         {
             AtualizarPainel();
         }
     }
 
-    // Initialize para containers.
-    public virtual void Initialize(object param1 = null, object param2 = null, object param3 = null) { }
-    public virtual void AtualizarPainel() { }
+    protected virtual void LateUpdate()
+    {
+        // Atualiza posição para paineis flutuantes
+        if (flutuante)
+        {
+            transform.position = flutuanteTarget.position + flutuanteOffset;
+            transform.LookAt(GameManager.Instance.mainCamera.transform);
+            transform.Rotate(0f, 180f, 0f); // gira em Y
+        }
+    }
 
-    // Funções para GameObjects do tipo Panel.
-    public virtual void AbrirPainel(object param1 = null, object param2 = null, object param3 = null)
+    protected virtual void OnDestroy()
+    {
+        PanelManager.Instance?.UnregisterPanel(this);
+    }
+    #endregion
+
+    #region Métodos principais
+    public virtual void Initialize(PanelParams param = null)
+    {
+        // Implementação padrão: pode ser sobrescrita
+    }
+
+    public virtual void AtualizarPainel()
+    {
+        // Sobrescrever nos paineis filhos
+    }
+
+    public virtual void SubscribeEvents(bool subscribe)
+    {
+        // Sobrescrever nos paineis filhos
+    }
+
+    public virtual void AbrirPainel(PanelParams param = null)
     {
         gameObject.SetActive(true);
+        Initialize(param);
     }
+
     public virtual void OcultarPainel()
     {
         gameObject.SetActive(false);
     }
+
     public virtual void FecharPainel()
     {
         Destroy(gameObject);
     }
+
+    public virtual void SetTarget(Transform target, Vector3 customOffset)
+    {
+        flutuanteTarget = target;
+        flutuanteOffset = customOffset;
+    }
+    #endregion
 }

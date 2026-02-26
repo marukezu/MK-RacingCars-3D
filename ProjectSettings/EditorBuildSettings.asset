@@ -6,12 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/GameMenu.unity
-    guid: 7eb295d4e54f9ac40b9d7bb20f9e3091
-  - enabled: 1
     path: Assets/Scenes/Race01-Pista-Terra/Race01-Pista-Terra.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
-    path: Assets/Scenes/Race02-Pista-Circuito-Deserto.unity
-    guid: 96a74b2ba2d05fe478db4a32615feb1a
   m_configObjects: {}

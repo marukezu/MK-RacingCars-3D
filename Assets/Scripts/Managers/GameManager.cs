@@ -1,20 +1,15 @@
-using Cinemachine;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    // ==
     public static GameManager Instance;
 
-    [HideInInspector] public Piloto pilotoEmFoco { get; private set; }
+    [Header("====== Main Câmera ======")]
+    public Camera mainCamera;
 
-    [Header("=========== PREFAB CARROS ============")]
-    public GameObject carro_Lanzia;
-    public GameObject carro_LanziaStradale;
-    public GameObject carro_RinaultAlpine;
+    [HideInInspector] public CarSimVisual carEmFoco { get; private set; }
 
     [Header("=========== PREFAB MINU CUPA'S ============")]
     public GameObject carro_MiniCupa_RED;
@@ -54,46 +49,27 @@ public class GameManager : MonoBehaviour
     }
 
     // =============================================================================================================
+    // ================================ Controle da velocidade do tempo de jogo ====================================
+    // =============================================================================================================
+    public GameObject InstantiateCarSimVisual(Vector3 position, Quaternion rotation)
+    {
+        return Instantiate(carro_MiniCupa_RED, position, rotation);
+    }
+
+    // =============================================================================================================
     // ================================================== Gets =====================================================
     // =============================================================================================================
-    public GameObject GetCarroByPiloto(Piloto piloto)
+    public GameObject GetCarroByPiloto(PilotoSim piloto)
     {
-        switch (piloto.CarroModelo)
-        {
-            case Carro.Modelo.Lanzia:
-                return carro_Lanzia;
-
-            case Carro.Modelo.LanziaStradale:
-                return carro_LanziaStradale;
-
-            case Carro.Modelo.RinaultAlpine:
-                return carro_RinaultAlpine;
-
-                // MINI CUPA'S
-            case Carro.Modelo.MiniCupa_RED:
-                return carro_MiniCupa_RED;
-
-            case Carro.Modelo.MiniCupa_BLUE:
-                return carro_MiniCupa_BLUE;
-
-            case Carro.Modelo.MiniCupa_GREEN:
-                return carro_MiniCupa_GREEN;
-
-            case Carro.Modelo.MiniCupa_YELLOW:
-                return carro_MiniCupa_YELLOW;
-
-            default:
-                return null;
-        }
+        return null;
     }
 
     // =============================================================================================================
     // ================================================== Sets =====================================================
     // =============================================================================================================
-    public void SetPilotoEmFoco(Piloto piloto)
+    public void SetPilotoEmFoco(CarSimVisual car)
     {
-        pilotoEmFoco = piloto;
-        CameraManager.Instance.AtualizarCamera(pilotoEmFoco.Carro);
+        carEmFoco = car;       
     }
 
     // =============================================================================================================

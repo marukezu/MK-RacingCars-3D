@@ -19,6 +19,11 @@ public class CameraManager : MonoBehaviour
             Instance = this;
     }
 
+    private void Start()
+    {
+        Inicializar();
+    }
+
     private void Update()
     {
         AtualizaBotoesCamera();
@@ -26,9 +31,6 @@ public class CameraManager : MonoBehaviour
 
     public void Inicializar()
     {
-        // Pega a referência do piloto em foco
-        GameManager.Instance.SetPilotoEmFoco(PlayerSettings.pilotoJogador);
-
         // Inicializa camera.
         podeTrocarCamera = true;
 
@@ -57,12 +59,12 @@ public class CameraManager : MonoBehaviour
         return mainCamera;
     }
 
-    public void AtualizarCamera(Carro carro)
+    public void AtualizarCamera(CarSimVisual car)
     {
-        if (!podeTrocarCamera && carro == null) return;
+        if (!podeTrocarCamera && car == null) return;
 
-        mainCamera.LookAt = carro.gameObject.transform;
-        mainCamera.Follow = carro.gameObject.transform;
+        mainCamera.LookAt = car.gameObject.transform;
+        mainCamera.Follow = car.gameObject.transform;
     }
 
     public void AtualizaBotoesCamera()

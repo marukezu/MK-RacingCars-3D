@@ -1,5 +1,6 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Unity.Splines.Examples;
 using UnityEngine;
 using static Panel;
 
@@ -7,7 +8,7 @@ public class PanelManager : MonoBehaviour
 {
     public static PanelManager Instance;
 
-    // Aponta para o canvas principal da Cena, OBS: O painel que ser� instanciado os paineis modulares PRECISAM ter o nome Exato do "GameObject.Find("NOME")"
+    // Aponta para o canvas principal da Cena, OBS: O painel que será instanciado os paineis modulares PRECISAM ter o nome Exato do "GameObject.Find("NOME")"
     private RectTransform _canvas;
     public RectTransform Canvas
     {
@@ -32,11 +33,23 @@ public class PanelManager : MonoBehaviour
     [SerializeField] private GameObject Painel_RACE_Info_SessaoClassificacao;
     [SerializeField] private GameObject Painel_RACE_Info_SessaoCorrida;
 
+    [Header("====== Paineis Flutuantes ======")]
+    [SerializeField] private GameObject Panel_Floating_CarInfo;
+    [SerializeField] private GameObject Panel_Floating_DuelInfo;
+
     // Dicionarios
     private Dictionary<PanelType, GameObject> painelDictionary;
 
     // Lista de paineis ativos no momento
     private List<GameObject> painelList = new List<GameObject>();
+
+    // Para o Floating Panel - Car Info
+    private List<PilotoSim> UltimosPilotos = null;
+
+    private void OnDestroy()
+    {
+        SubscribeEvents(false);
+    }
 
     private void Awake()
     {
@@ -46,6 +59,20 @@ public class PanelManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         InitializeDictionary();
+
+        SubscribeEvents(true);
+    }
+
+    private void SubscribeEvents(bool subscribe)
+    {
+        if (subscribe)
+        {
+            EventBus.On_Piloto_PosicaoAtualChanged += Instanciar_PaineisFlutuantes_CarInfo;
+        }
+        else
+        {
+            EventBus.On_Piloto_PosicaoAtualChanged -= Instanciar_PaineisFlutuantes_CarInfo;
+        }
     }
 
     private void InitializeDictionary()
@@ -66,11 +93,14 @@ public class PanelManager : MonoBehaviour
             { PanelType.RACE_INFO_SESSAOCLASSIFICACAO, Painel_RACE_Info_SessaoClassificacao },
             { PanelType.RACE_INFO_SESSAOCORRIDA, Painel_RACE_Info_SessaoCorrida },
 
+            // Paineis flutuantes
+            { PanelType.FLOATING_CARINFO, Panel_Floating_CarInfo },
+            { PanelType.FLOATING_DUELINFO, Panel_Floating_DuelInfo },
         };
     }
 
     // ==========================================================================================
-    // =========================== FUN��ES PARA MANUSEIO DOS PAINEIS ============================
+    // =========================== FUNÇÕES PARA MANUSEIO DOS PAINEIS ============================
     // ==========================================================================================
     public GameObject GetPanel(PanelType panelType)
     {
@@ -83,15 +113,26 @@ public class PanelManager : MonoBehaviour
 
         return null;
     }
-    public GameObject InstanciarERetornarPainel(PanelType panelType, object param1 = null, object param2 = null, object param3 = null)
+    public GameObject InstanciarERetornarPainel(PanelType panelType, PanelParams param = null)
     {
         if (painelDictionary.TryGetValue(panelType, out GameObject painel))
         {
             GameObject newPanel = Instantiate(painel, Canvas);
-            newPanel.GetComponent<Panel>().AbrirPainel(param1, param2, param3);
+            newPanel.GetComponent<Panel>().Initialize(param);
             painelList.Add(newPanel);
 
-            Debug.Log("Painel encontrado, instanciando: " + panelType);
+            return newPanel;
+        }
+
+        return null;
+    }
+    public GameObject InstanciarERetornarPainelFlutuante(PanelType panelType, PanelParams param = null)
+    {
+        if (painelDictionary.TryGetValue(panelType, out GameObject painel))
+        {
+            GameObject newPanel = Instantiate(painel);
+            newPanel.GetComponent<Panel>().Initialize(param);
+            painelList.Add(newPanel);
 
             return newPanel;
         }
@@ -125,8 +166,54 @@ public class PanelManager : MonoBehaviour
     }
 
     // ==========================================================================================
-    // ========================== FUN��ES DE GERENCIAMENTO DE PAINEIS ===========================
+    // =========================== FUNÇÕES DE INSTACIAÇÃO DE PAINEIS ============================
     // ==========================================================================================
+    private void Instanciar_PaineisFlutuantes_CarInfo(PilotoSim pilotoQueMudou, int pos)
+    {
+        PilotoSim meuPiloto = GameManager.Instance.carEmFoco.piloto;
+
+        // 1️⃣ Ordena por posição real
+        var ordenados = PilotosDataBase.Pilotos_CampeonatoAtual
+            .OrderBy(p => p.PosicaoCorrida)
+            .ToList();
+
+        int minhaPos = meuPiloto.PosicaoCorrida;
+        int total = ordenados.Count;
+
+        // 2️⃣ Recalcula quem DEVE aparecer
+        List<PilotoSim> novos = new List<PilotoSim>();
+        novos.Add(meuPiloto);
+
+        if (minhaPos > 1)
+            novos.Add(ordenados[minhaPos - 2]);  // piloto à frente
+
+        if (minhaPos < total)
+            novos.Add(ordenados[minhaPos]);      // piloto atrás
+
+        // 3️⃣ Se NADA mudou desde o último trio, não faz nada
+        if (UltimosPilotos != null &&
+            novos.SequenceEqual(UltimosPilotos))
+            return;
+
+        UltimosPilotos = novos.ToList();
+
+        // 4️⃣ Destroi paineis antigos
+        foreach (var panel in painelList)
+        {
+            Panel ps = panel.GetComponent<Panel>();
+            if (ps.Type == PanelType.FLOATING_CARINFO)
+                ps.FecharPainel();
+        }
+
+        // 5️⃣ Instancia os novos
+        foreach (var p in novos)
+        {
+            PanelParams prm = new PanelParams();
+            prm.pilotoSim1 = p;
+            InstanciarERetornarPainelFlutuante(PanelType.FLOATING_CARINFO, prm);
+        }
+    }
+
     public void InstanciarPaineisClassificacao()
     {
         InstanciarERetornarPainel(PanelType.RACE_CARINFO);
@@ -137,9 +224,6 @@ public class PanelManager : MonoBehaviour
     }
     public void InstanciarPaineisCorrida()
     {
-        InstanciarERetornarPainel(PanelType.RACE_CARINFO);
-        InstanciarERetornarPainel(PanelType.RACE_DATAHORA);
         InstanciarERetornarPainel(PanelType.RACE_PILOTOCONTROLLER);
-        InstanciarERetornarPainel(PanelType.RACE_GAMESPEED);
     }
 }

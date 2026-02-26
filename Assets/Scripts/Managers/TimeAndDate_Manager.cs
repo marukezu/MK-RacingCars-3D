@@ -1,78 +1,60 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
-using System;
+﻿using UnityEngine;
 
 public class TimeAndDate_Manager : MonoBehaviour
 {
-
     public static TimeAndDate_Manager Instance;
 
     [SerializeField] private Transform luzDirecional;
-    [SerializeField] private int duracaoDiaEmSegundos;
+    [SerializeField] private int duracaoDiaEmSegundos = 1200; // exemplo
 
-    private int duracaoDoDia;
-    private float segundos;
-    private float multiplicador;
+    private float segundos;      // 0 a 86400
+    private float multiplicador; // aceleração do tempo
+
+    private const float SEGUNDOS_DIA = 86400f;
 
     private void Awake()
     {
-        if (Instance == null) 
-            Instance = this;
+        Instance ??= this;
     }
 
-    void Start()
+    private void Start()
     {
-        segundos = 86400 / 2.3f; // para iniciar o jogo 10 da manha.
+        // Iniciar às 10h da manhã
+        segundos = SEGUNDOS_DIA / 2.3f;
 
         SetDuracaoDia(duracaoDiaEmSegundos);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         segundos += Time.deltaTime * multiplicador;
 
-        if(segundos >= 86400)
-        {
-            segundos = 0;
-        }
+        if (segundos >= SEGUNDOS_DIA)
+            segundos -= SEGUNDOS_DIA;
 
-        ProcessarCeu();
+        AtualizarSol();
     }
 
-    private void ProcessarCeu()
+    private void AtualizarSol()
     {
-        float rotacaoX = Mathf.Lerp(-90, 270, segundos/86400);
-        luzDirecional.rotation = Quaternion.Euler(rotacaoX, 0, 0);
+        // Converte o valor para 0 → 1 e aplica rotação suave
+        float t = segundos / SEGUNDOS_DIA;
+        float rotacaoX = Mathf.Lerp(-90f, 270f, t);
+
+        luzDirecional.rotation = Quaternion.Euler(rotacaoX, 0f, 0f);
     }
 
-    // GET SETS
-    public void SetDuracaoDia(int tempo)
+    // Define quantos segundos o dia dura dentro do jogo
+    public void SetDuracaoDia(int duracaoReal)
     {
-        duracaoDoDia = tempo;
-        multiplicador = 86400 / duracaoDoDia;
+        multiplicador = SEGUNDOS_DIA / duracaoReal;
     }
 
-    public float GetSegundosAtuais()
-    {
-        return segundos;
-    }
+    public float GetSegundosAtuais() => segundos;
 
     public bool EstaDeNoite()
     {
-        // 21600 = 6 da manha, 64800 = 6 da tarde.
-        if(segundos > 21600 && segundos < 64800) // De dia
-        {
-            return false;
-        }
-
-        if(segundos >= 0 && segundos <= 21599) // De noite
-        {
-            return true;
-        }
-
-        return false;
+        float hora = segundos / 3600f; // 0 → 24
+        return hora < 6f || hora >= 17f;
     }
 }
