@@ -1,5 +1,5 @@
-MK-RacingCars3D
-A Motorsport Strategy & Simulation Prototype
+# 🏁 MK-RacingCars3D  
+### A Motorsport Strategy & Simulation Prototype
 
 MK-RacingCars3D é um protótipo de simulação estratégica de corrida desenvolvido em Unity (C#), com foco em arquitetura modular, tomada de decisão em tempo real e gerenciamento dinâmico de recursos durante corridas.
 
@@ -78,9 +78,11 @@ Estrutura baseada em Prefabs e Managers desacoplados
 
 Assets 3D próprios e complementos da Asset Store
 
+---
+
 ▶ Como Executar
 
-Abra o projeto no Unity Hub (versão 2023.x recomendada)
+Abra o projeto no Unity Hub (versão 2022.x recomendada)
 
 Carregue a cena principal
 
