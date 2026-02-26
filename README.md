@@ -7,7 +7,7 @@ O projeto explora a interseção entre simulação técnica e estratégia de equ
 
 ---
 
-🎯 Objetivo do Projeto
+🎯 ### Objetivo do Projeto
 
 Este projeto não foi criado apenas como um jogo jogável, mas como um estudo prático de:
 
@@ -25,7 +25,7 @@ Ele faz parte do meu portfólio como desenvolvedor independente.
 
 ---
 
-🧠 Sistemas Implementados
+🧠 ### Sistemas Implementados
 🏁 Simulação de Corrida
 
 Corrida em tempo real com múltiplos pilotos controlados por IA
@@ -52,7 +52,7 @@ Influência direta do jogador na tomada de decisão da equipe
 
 ---
 
-🏗 Arquitetura
+🏗 ### Arquitetura
 
 O projeto foi estruturado com foco em organização e separação de responsabilidades:
 
@@ -68,7 +68,7 @@ Estrutura preparada para expansão futura (campeonato, múltiplas equipes, progr
 
 ---
 
-🛠 Tecnologias Utilizadas
+🛠 ### Tecnologias Utilizadas
 
 Unity 2022.x
 
@@ -80,7 +80,7 @@ Assets 3D próprios e complementos da Asset Store
 
 ---
 
-▶ Como Executar
+▶ ### Como Executar
 
 Abra o projeto no Unity Hub (versão 2022.x recomendada)
 
@@ -92,7 +92,7 @@ Observação: este é um protótipo focado em sistemas e arquitetura. Não possu
 
 ---
 
-📌 Roadmap
+📌 ### Roadmap
 
 Sistema completo de campeonato
 
@@ -106,7 +106,7 @@ Polimento visual e otimização
 
 ---
 
-👨‍💻 Autor
+👨‍💻 ### Autor
 
 Maurício Makimori
 Desenvolvedor independente focado em simulação, arquitetura de sistemas e prototipagem avançada.
@@ -117,7 +117,7 @@ Instagram: https://www.instagram.com/marukesu92/
 
 ---
 
-📜 Licença
+📜 ### Licença
 
 Todos os direitos reservados.
 O código pode ser analisado para fins de estudo, mas não pode ser utilizado, modificado ou redistribuído sem autorização.
